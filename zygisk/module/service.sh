@@ -2,6 +2,12 @@
 MODDIR="${0%/*}"
 cd "$MODDIR" || exit 1
 
+# KernelSU can replay service.sh after an emulated soft reboot. Clean up the
+# previous daemon and its compiler mounts before creating a replacement.
+if [ "$KSU" = true ]; then
+    sh "$MODDIR/emulated-soft-reboot.sh" || exit 1
+fi
+
 # A root manager runs this script with its own busybox, but a manual bootstrap has nothing in
 # front of it except Android's utilities, so this is written for toybox's unshare: it makes a
 # mount namespace with -m and takes no propagation flag. The namespace therefore marks its own
